@@ -1,0 +1,17 @@
+[tool.black]
+line-length = 120
+target-version = ['py38']
+
+[tool.isort]
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 120
+multi_line_output = 3
+profile = "black"
+src_paths = ["pybokio", "tests"]
+use_parentheses = true
+
+[tool.vulture]
+# exclude = []
+min_confidence = 80
+paths = ["pybokio/", "tests/"]
