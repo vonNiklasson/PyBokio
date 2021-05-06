@@ -14,6 +14,7 @@ setup(
     python_requires=">=3.6",
     packages=packages,
     install_requires=[
-        "dataclasses==0.8 ; python_version>='3.6' and python_version<'3.7'",
+        "dataclasses==0.8; python_version>='3.6' and python_version<'3.7'",
+        "requests>=2.20",
     ],
 )
