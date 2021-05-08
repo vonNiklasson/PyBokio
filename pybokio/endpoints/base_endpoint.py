@@ -41,6 +41,10 @@ class BaseEndpoint:
         ...
 
     @property
+    def kwargs(self):
+        return {"method": self.method, "path": self.path}
+
+    @property
     def method(self) -> str:
         if not hasattr(self, "_METHOD"):
             raise NotImplementedError()
