@@ -2,10 +2,10 @@ from typing import Dict
 
 from requests import Response
 
-from pybokio.endpoints.base_endpoint import BaseEndpoint
+from pybokio.routers.base_router import BaseRouter
 
 
-class AccountLoginEndpoint(BaseEndpoint):
+class AccountLoginRouter(BaseRouter):
     _METHOD: str = "POST"
     _PATH: str = "/Account/Login"
 
@@ -33,7 +33,7 @@ class AccountLoginEndpoint(BaseEndpoint):
         res = self._validate_json_response(response, self._JSON_SCHEMA)
 
 
-class AccountIsAuthenticatedEndpoint(BaseEndpoint):
+class AccountIsAuthenticatedRouter(BaseRouter):
     _METHOD: str = "GET"
     _PATH: str = "/Account/IsAuthenticated"
 

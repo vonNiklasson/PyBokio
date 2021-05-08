@@ -6,7 +6,7 @@ from requests import Response
 from requests.sessions import RequestsCookieJar
 
 from pybokio.client.base_client import BaseClient, ConnectionMethod
-from pybokio.endpoints.account import AccountLoginEndpoint, AccountIsAuthenticatedEndpoint
+from pybokio.routers.account_routers import AccountLoginRouter, AccountIsAuthenticatedRouter
 from pybokio.exceptions import InvalidCredentialsError
 from pybokio.utils.verification import is_response_json, is_valid_uuid4
 
@@ -80,8 +80,8 @@ class BokioClient(BaseClient):
             raise Exception("Cannot login when using cookiejar. Use connect() instead.")
 
         payload = {"userName": self.__username, "password": self.__password}
-        endpoint = AccountLoginEndpoint()
-        response: Response = self._request(**endpoint.kwargs)
+        endpoint = AccountLoginRouter()
+        response: Response = self._request(**endpoint.kwargs, json=payload)
 
         endpoint.validate_response(response)
         res = response.json()
@@ -110,7 +110,7 @@ class BokioClient(BaseClient):
 
         :return: True if the credentials or session are valid, otherwise False.
         """
-        endpoint = AccountIsAuthenticatedEndpoint()
+        endpoint = AccountIsAuthenticatedRouter()
         response: Response = self._request(**endpoint.kwargs)
         endpoint.validate_response(response)
         res = response.json()

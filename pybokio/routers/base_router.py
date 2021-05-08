@@ -9,7 +9,7 @@ from _exceptions import ExpectedJsonException, InvalidJsonSchemaException
 from utils.verification import is_response_json
 
 
-class BaseEndpoint:
+class BaseRouter:
     _METHOD: str
     _PATH: str
 
@@ -24,7 +24,7 @@ class BaseEndpoint:
         :raises UnexpectedResponseError: In case the response is malformed in any way.
         """
         if not is_response_json(response):
-            raise ExpectedJsonException()
+            raise ExpectedJsonException
         res = response.json()
 
         # If a schema is provided, make sure it matches
@@ -32,7 +32,7 @@ class BaseEndpoint:
             try:
                 validate_json(res, schema)
             except js_exceptions.ValidationError:
-                raise InvalidJsonSchemaException()
+                raise InvalidJsonSchemaException
 
         return res
 
