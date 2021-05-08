@@ -117,5 +117,3 @@ class BokioClient(BaseClient):
         res = response.json()
         assert "Data" in res
         return res["Data"]
-
-
