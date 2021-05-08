@@ -31,3 +31,22 @@ class AccountLoginEndpoint(BaseEndpoint):
 
     def validate_response(self, response: Response):
         res = self._validate_json_response(response, self._JSON_SCHEMA)
+
+
+class AccountIsAuthenticatedEndpoint(BaseEndpoint):
+    _METHOD: str = "GET"
+    _PATH: str = "/Account/IsAuthenticated"
+
+    _JSON_SCHEMA: Dict = {
+        "type": "object",
+        "properties": {
+            "Data": {"type": "boolean"},
+            "Error": {"type": ["string", "null"]},
+            "Success": {"type": "boolean"},
+            "ErrorMessage": {"type": ["string", "null"]},
+        },
+        "required": ["Data"],
+    }
+
+    def validate_response(self, response: Response):
+        res = self._validate_json_response(response, self._JSON_SCHEMA)

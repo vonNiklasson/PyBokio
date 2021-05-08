@@ -110,10 +110,8 @@ class BokioClient(BaseClient):
 
         :return: True if the credentials or session are valid, otherwise False.
         """
-        response: Response = self._request("GET", "/Account/IsAuthenticated")
-        assert response.ok
-        assert is_response_json(response)
-
+        endpoint = AccountLoginEndpoint()
+        response: Response = self._request(endpoint.method, endpoint.path)
+        endpoint.validate_response(response)
         res = response.json()
-        assert "Data" in res
         return res["Data"]
