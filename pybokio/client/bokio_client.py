@@ -72,7 +72,19 @@ class BokioClient(BaseClient):
         return self.__session
 
     def connect(self):
-        pass
+        """
+        Attempts to connect to Bokio with the provided connection method.
+        Will raise Exceptions if unable to do so.
+
+        :raises InvalidCredentialsError: If the provided credentials were invalid.
+        :raises ConnectionRefusedError: If the cookies couldn't be used to authenticate.
+        """
+        if self.connection_method == ConnectionMethod.CREDENTIALS:
+            self.account_login()
+        elif self.connection_method == ConnectionMethod.COOKIES:
+            is_authenticated = self.account_is_authenticated()
+            if not is_authenticated:
+                raise ConnectionRefusedError("Provided cookies couldn't authenticate.")
 
     def account_login(self) -> List[str]:
         # Can only login when using credentials as initialisation method.
