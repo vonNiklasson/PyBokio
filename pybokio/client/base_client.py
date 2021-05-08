@@ -11,7 +11,7 @@ from pybokio import __version__
 
 class ConnectionMethod(enum.Enum):
     CREDENTIALS = enum.auto()
-    SESSION = enum.auto()
+    COOKIES = enum.auto()
 
 
 class BaseClient(metaclass=abc.ABCMeta):

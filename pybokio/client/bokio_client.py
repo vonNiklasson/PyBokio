@@ -6,8 +6,8 @@ from requests import Response
 from requests.sessions import RequestsCookieJar
 
 from pybokio.client.base_client import BaseClient, ConnectionMethod
-from pybokio.routers.account_routers import AccountLoginRouter, AccountIsAuthenticatedRouter
 from pybokio.exceptions import InvalidCredentialsError
+from pybokio.routers.account_routers import AccountIsAuthenticatedRouter, AccountLoginRouter
 from pybokio.utils.verification import is_response_json, is_valid_uuid4
 
 
@@ -43,7 +43,7 @@ class BokioClient(BaseClient):
         user_agent: str = BaseClient.DEFAULT_USER_AGENT,
     ):
         client = cls(company_id=company_id, base_url=base_url, timeout=timeout, user_agent=user_agent)
-        client.__connection_method = ConnectionMethod.SESSION
+        client.__connection_method = ConnectionMethod.COOKIES
         client.session.cookies.update(cookiejar)
         return client
 
