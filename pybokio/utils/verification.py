@@ -24,5 +24,9 @@ def is_valid_uuid4(uuid_string: str) -> bool:
     return str(val) == uuid_string.lower()
 
 
-def is_json(response: Response) -> bool:
+def is_response_json(response: Response) -> bool:
+    try:
+        response.json()
+    except ValueError:
+        return False
     return "application/json" in response.headers["Content-Type"]

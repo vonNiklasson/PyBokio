@@ -1,11 +1,14 @@
+import warnings
 from typing import List
 
 import requests
 from requests import Response
 from requests.sessions import RequestsCookieJar
 
-from client.base_client import BaseClient
-from utils.verification import is_json, is_valid_uuid4
+from pybokio.client.base_client import BaseClient, ConnectionMethod
+from pybokio.endpoints.account import AccountLoginEndpoint
+from pybokio.exceptions import InvalidCredentialsError
+from pybokio.utils.verification import is_response_json, is_valid_uuid4
 
 
 class BokioClient(BaseClient):
@@ -16,14 +19,17 @@ class BokioClient(BaseClient):
         password: str = None,
         base_url: str = BaseClient.DEFAULT_BASE_URL,
         timeout: int = 10,
+        user_agent: str = BaseClient.DEFAULT_USER_AGENT,
     ):
         assert is_valid_uuid4(company_id), f'Parameter company_id "{company_id}" is not a valid UUID4 format.'
 
+        self.__connection_method: ConnectionMethod = ConnectionMethod.CREDENTIALS
         self.__username: str = username
         self.__password: str = password
         self.__company_id: str = company_id
         self.__base_url: str = base_url.rstrip("/")
         self.__timeout: int = timeout
+        self.__user_agent: str = user_agent
 
         self.__session = requests.session()
 
@@ -34,10 +40,16 @@ class BokioClient(BaseClient):
         cookiejar: RequestsCookieJar,
         base_url: str = BaseClient.DEFAULT_BASE_URL,
         timeout: int = 10,
+        user_agent: str = BaseClient.DEFAULT_USER_AGENT,
     ):
-        client = cls(company_id=company_id, base_url=base_url, timeout=timeout)
+        client = cls(company_id=company_id, base_url=base_url, timeout=timeout, user_agent=user_agent)
+        client.__connection_method = ConnectionMethod.SESSION
         client.session.cookies.update(cookiejar)
         return client
+
+    @property
+    def connection_method(self) -> ConnectionMethod:
+        return self.__connection_method
 
     @property
     def company_id(self) -> str:
@@ -52,33 +64,44 @@ class BokioClient(BaseClient):
         return self.__timeout
 
     @property
+    def user_agent(self) -> str:
+        return self.__user_agent
+
+    @property
     def session(self) -> requests.Session:
         return self.__session
 
-    def login(self) -> List[str]:
-        payload = {"userName": self.__username, "password": self.__password}
-        response: Response = self._request("POST", "/Account/Login", json=payload)
-        assert response.ok
-        assert is_json(response)
+    def connect(self):
+        pass
 
+    def account_login(self) -> List[str]:
+        # Can only login when using credentials as initialisation method.
+        if self.connection_method is not ConnectionMethod.CREDENTIALS:
+            raise Exception("Cannot login when using cookiejar. Use connect() instead.")
+
+        payload = {"userName": self.__username, "password": self.__password}
+        endpoint = AccountLoginEndpoint()
+        response: Response = self._request(endpoint.method, endpoint.path, json=payload)
+
+        endpoint.validate_response(response)
         res = response.json()
-        assert "Success" in res
+
         if res["Success"] is True:
-            assert "Data" in res
-            assert "CompanyIds" in res["Data"]
             company_ids = res["Data"]["CompanyIds"]
-            assert type(company_ids) == list
-            assert (
-                self.company_id in company_ids
-            ), f'company_id "{self.company_id}" not among allowed ids "{", ".join(company_ids)}"'
+            if self.company_id not in company_ids:
+                warnings.warn(f'company_id "{self.company_id}" not among allowed ids "{", ".join(company_ids)}"')
             return company_ids
         else:
-            assert "Error" in res
-            assert "ErrorMessage" in res
-            exception_message = f"{res['Error']}: {res['ErrorMessage']}"
-            raise Exception(exception_message)
+            error_code = res["Error"]
+            error_message = res["ErrorMessage"]
+            exception_message = f"{error_code}: {error_message}"
 
-    def logout(self) -> bool:
+            if error_code == "UserNotFound" or error_code == "InvalidPassword":
+                raise InvalidCredentialsError(exception_message)
+            else:
+                raise Exception(exception_message)
+
+    def account_logout(self) -> bool:
         pass
 
     def get_is_authenticated(self) -> bool:
@@ -89,8 +112,10 @@ class BokioClient(BaseClient):
         """
         response: Response = self._request("GET", "/Account/IsAuthenticated")
         assert response.ok
-        assert is_json(response)
+        assert is_response_json(response)
 
         res = response.json()
         assert "Data" in res
         return res["Data"]
+
+

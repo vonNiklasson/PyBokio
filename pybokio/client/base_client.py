@@ -1,9 +1,17 @@
 import abc
 import copy
+import enum
 
 import requests
 from requests import Response
 from requests.cookies import RequestsCookieJar
+
+from pybokio import __version__
+
+
+class ConnectionMethod(enum.Enum):
+    CREDENTIALS = enum.auto()
+    SESSION = enum.auto()
 
 
 class BaseClient(metaclass=abc.ABCMeta):
@@ -12,6 +20,16 @@ class BaseClient(metaclass=abc.ABCMeta):
     """
     The base URL of the bokio URL. Can be changed for testing purposes.
     """
+
+    DEFAULT_USER_AGENT: str = f"PyBokio Client version {__version__} alpha (https://github.com/vonNiklasson/PyBokio)"
+    """
+    The user agent to be used when making requests.
+    """
+
+    @property
+    @abc.abstractmethod
+    def connection_method(self) -> ConnectionMethod:
+        raise NotImplementedError()
 
     @property
     @abc.abstractmethod
@@ -26,6 +44,11 @@ class BaseClient(metaclass=abc.ABCMeta):
     @property
     @abc.abstractmethod
     def timeout(self) -> int:
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
+    def user_agent(self) -> str:
         raise NotImplementedError()
 
     @property
@@ -58,9 +81,13 @@ class BaseClient(metaclass=abc.ABCMeta):
     def _request(self, method: str, path: str, **kwargs) -> Response:
         assert method.upper() in ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"]
 
-        # Add timeout to the kwargs if not already present
+        # Add timeout to the kwargs if not passed
         if "timeout" not in kwargs:
             kwargs["timeout"] = self.timeout
+
+        # Add the default user agent if not passed
+        if "user_agent" not in kwargs:
+            kwargs["headers"] = {"User-Agent": self.user_agent}
 
         url = self._prepare_url(path)
         response = self.session.request(method, url, **kwargs)
