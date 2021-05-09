@@ -4,7 +4,7 @@ from typing import List
 
 from requests import Response
 
-from pybokio.client.base_client import BaseClient, ConnectionMethod
+from pybokio.client._base_client import BaseClient, ConnectionMethod
 from pybokio.exceptions import AuthenticationError
 from routers.account_routers import AccountIsAuthenticatedRouter, AccountLoginRouter, AccountLogoutRouter
 
