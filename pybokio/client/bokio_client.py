@@ -90,7 +90,7 @@ class BokioClient(BaseClient):
 
         payload = {"userName": self.__username, "password": self.__password}
         endpoint = AccountLoginRouter()
-        response: Response = self._request(**endpoint.kwargs, json=payload)
+        response: Response = self.call_api(**endpoint.kwargs, json=payload)
 
         endpoint.validate_response(response)
         res = response.json()
@@ -120,7 +120,7 @@ class BokioClient(BaseClient):
         :return: True if the credentials or session are valid, otherwise False.
         """
         endpoint = AccountIsAuthenticatedRouter()
-        response: Response = self._request(**endpoint.kwargs)
+        response: Response = self.call_api(**endpoint.kwargs)
         endpoint.validate_response(response)
         res = response.json()
         return res["Data"]

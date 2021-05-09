@@ -78,7 +78,7 @@ class BaseClient(metaclass=abc.ABCMeta):
 
         return url
 
-    def _request(self, method: str, path: str, **kwargs) -> Response:
+    def call_api(self, method: str, path: str, **kwargs) -> Response:
         assert method.upper() in ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"]
 
         # Add timeout to the kwargs if not passed
@@ -86,7 +86,7 @@ class BaseClient(metaclass=abc.ABCMeta):
             kwargs["timeout"] = self.timeout
 
         # Add the default user agent if not passed
-        if "user_agent" not in kwargs:
+        if "headers" not in kwargs:
             kwargs["headers"] = {"User-Agent": self.user_agent}
 
         url = self._prepare_url(path)
