@@ -1,5 +1,18 @@
 # PyBokio
 
+[![License][license_img]][license_target]
+[![Latest PyPI version][pypi_version_img]][pypi_target]
+[![Supports Wheel format][wheel_img]][wheel_target]
+
+[license_target]: https://raw.githubusercontent.com/vonNiklasson/pybokio/develop/LICENSE
+[license_img]: https://img.shields.io/pypi/l/pybokio.svg
+
+[pypi_target]: https://pypi.python.org/pypi/pybokio/
+[pypi_version_img]: https://img.shields.io/pypi/v/pybokio.svg
+
+[wheel_target]: https://pypi.python.org/pypi/pybokio/
+[wheel_img]: https://img.shields.io/pypi/wheel/pybokio.svg
+
 Unofficial SDK for interacting with [Bokio](https://www.bokio.se)
 
 > Currently the project is in very early development and very little 
