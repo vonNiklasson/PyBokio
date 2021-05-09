@@ -1,14 +1,12 @@
 import copy
-import warnings
-from typing import List
 
 import requests
 from requests import Response
 from requests.sessions import RequestsCookieJar
 
-from client.subclients import AccountClient, AccountingClient
 from pybokio import __version__
 from pybokio.client.base_client import BaseClient, ConnectionMethod
+from pybokio.client.subclients import AccountClient, AccountingClient
 from pybokio.exceptions import AuthenticationError
 
 
@@ -21,7 +19,7 @@ class BokioClient(AccountClient, AccountingClient, BaseClient):
 
     DEFAULT_USER_AGENT: str = f"PyBokio Client version {__version__} alpha (https://github.com/vonNiklasson/PyBokio)"
     """
-    The user agent to be used when making requests.
+    The user agent to be sent when making requests.
     """
 
     def __init__(
@@ -60,26 +58,44 @@ class BokioClient(AccountClient, AccountingClient, BaseClient):
 
     @property
     def connection_method(self) -> ConnectionMethod:
+        """
+        The method used to establish a connection or authenticate to Bokio.
+        """
         return self.__connection_method
 
     @property
     def company_id(self) -> str:
+        """
+        The company id currently being worked on with the client.
+        """
         return self.__company_id
 
     @property
     def base_url(self) -> str:
+        """
+        The base url being used, for example https://www.bokio.se
+        """
         return self.__base_url
 
     @property
     def timeout(self) -> int:
+        """
+        How long to wait during an API call before giving up.
+        """
         return self.__timeout
 
     @property
     def user_agent(self) -> str:
+        """
+        The user agent sent to Bokio in the header.
+        """
         return self.__user_agent
 
     @property
     def session(self) -> requests.Session:
+        """
+        The requests session that's being used to make calls.
+        """
         return self.__session
 
     def get_cookies(self) -> RequestsCookieJar:
@@ -105,6 +121,14 @@ class BokioClient(AccountClient, AccountingClient, BaseClient):
         return url
 
     def call_api(self, method: str, path: str, **kwargs) -> Response:
+        """
+        Makes a request to Bokio.
+
+        :param method: One of GET, POST, PUT, PATCH, DELETE, HEAD
+        :param path: The path after bokio.se/... to call
+        :param kwargs: Any extra parameters that will be sent to request(..., **kwargs)
+        :return: The response of the request.
+        """
         assert method.upper() in ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"]
 
         # Add timeout to the kwargs if not passed
