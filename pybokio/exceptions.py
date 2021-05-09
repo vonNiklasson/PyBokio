@@ -1,4 +1,4 @@
-class InvalidCredentialsError(Exception):
+class AuthenticationError(Exception):
     pass
 
 

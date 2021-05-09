@@ -56,11 +56,11 @@ class BaseClient(metaclass=abc.ABCMeta):
     def session(self) -> requests.Session:
         raise NotImplementedError()
 
-    def get_cookiejar(self) -> RequestsCookieJar:
+    def get_cookies(self) -> RequestsCookieJar:
         """
-        Returns a copy of the cookiejar associated with the current session.
+        Returns a copy of the cookies associated with the current session.
 
-        :return: The cookiejar from the current session.
+        :return: The cookies from the current session.
         """
         return copy.deepcopy(self.session.cookies)
 

@@ -26,17 +26,18 @@ client = BokioClient(
 client.connect()
 ```
 
-#### Connecting with cookiejar
+#### Connecting with cookies
 
-A preferred way to connect is to reuse the session after logging in with credentials.
+A preferred way to connect is to reuse the cookies after logging in with credentials.
 
 **Saving cookies from an existing session**
 
 ```python
 import pickle
+
 ...
 
-cookies = client.get_cookiejar()
+cookies = client.get_cookies()
 with open('session.pickle', 'wb') as f:
     pickle.dump(cookies, f)
 ```
@@ -50,9 +51,9 @@ import pickle
 with open('session.pickle') as f:
     cookies = pickle.load(f)
 
-client = BokioClient.from_cookiejar(
+client = BokioClient.from_cookies(
     company_id="00000000-0000-4000-0000-000000000000",
-    cookiejar=cookies
+    cookies=cookies
 )
 client.connect()
 ```

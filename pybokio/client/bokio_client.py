@@ -6,9 +6,8 @@ from requests import Response
 from requests.sessions import RequestsCookieJar
 
 from pybokio.client.base_client import BaseClient, ConnectionMethod
-from pybokio.exceptions import InvalidCredentialsError
+from pybokio.exceptions import AuthenticationError
 from pybokio.routers.account_routers import AccountIsAuthenticatedRouter, AccountLoginRouter
-from pybokio.utils.verification import is_response_json, is_valid_uuid4
 
 
 class BokioClient(BaseClient):
@@ -21,8 +20,6 @@ class BokioClient(BaseClient):
         timeout: int = 10,
         user_agent: str = BaseClient.DEFAULT_USER_AGENT,
     ):
-        assert is_valid_uuid4(company_id), f'Parameter company_id "{company_id}" is not a valid UUID4 format.'
-
         self.__connection_method: ConnectionMethod = ConnectionMethod.CREDENTIALS
         self.__username: str = username
         self.__password: str = password
@@ -34,17 +31,17 @@ class BokioClient(BaseClient):
         self.__session = requests.session()
 
     @classmethod
-    def from_cookiejar(
+    def from_cookies(
         cls,
         company_id: str,
-        cookiejar: RequestsCookieJar,
+        cookies: RequestsCookieJar,
         base_url: str = BaseClient.DEFAULT_BASE_URL,
         timeout: int = 10,
         user_agent: str = BaseClient.DEFAULT_USER_AGENT,
     ):
         client = cls(company_id=company_id, base_url=base_url, timeout=timeout, user_agent=user_agent)
         client.__connection_method = ConnectionMethod.COOKIES
-        client.session.cookies.update(cookiejar)
+        client.session.cookies.update(cookies)
         return client
 
     @property
@@ -76,20 +73,20 @@ class BokioClient(BaseClient):
         Attempts to connect to Bokio with the provided connection method.
         Will raise Exceptions if unable to do so.
 
-        :raises InvalidCredentialsError: If the provided credentials were invalid.
-        :raises ConnectionRefusedError: If the cookies couldn't be used to authenticate.
+        :raises AuthenticationError: If it wasn't possible to authenticate.
         """
         if self.connection_method == ConnectionMethod.CREDENTIALS:
+            # account_login() will raise AuthenticationError if failing.
             self.account_login()
         elif self.connection_method == ConnectionMethod.COOKIES:
             is_authenticated = self.account_is_authenticated()
             if not is_authenticated:
-                raise ConnectionRefusedError("Provided cookies couldn't authenticate.")
+                raise AuthenticationError("Provided cookies couldn't authenticate.")
 
     def account_login(self) -> List[str]:
         # Can only login when using credentials as initialisation method.
         if self.connection_method is not ConnectionMethod.CREDENTIALS:
-            raise Exception("Cannot login when using cookiejar. Use connect() instead.")
+            raise Exception("Cannot login when using cookies. Use connect() instead.")
 
         payload = {"userName": self.__username, "password": self.__password}
         endpoint = AccountLoginRouter()
@@ -109,7 +106,7 @@ class BokioClient(BaseClient):
             exception_message = f"{error_code}: {error_message}"
 
             if error_code == "UserNotFound" or error_code == "InvalidPassword":
-                raise InvalidCredentialsError(exception_message)
+                raise AuthenticationError(exception_message)
             else:
                 raise Exception(exception_message)
 
