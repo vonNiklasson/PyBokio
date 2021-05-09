@@ -71,3 +71,23 @@ bump-version-major:
 	#       If this operation succeeds, it will create a version-bumping commit
 	bump2version major --list
 	git log --oneline -1
+
+
+##############################################################################################
+# BUILDING & PUBLISHING                                                                      #
+##############################################################################################
+
+
+.PHONY: build
+build:
+	python setup.py --quiet sdist bdist_wheel
+
+
+.PHONY: publish-test
+publish-test:
+	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+
+.PHONY: publish
+publish:
+	twine upload dist/*
