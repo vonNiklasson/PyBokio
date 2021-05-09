@@ -1,5 +1,5 @@
 import warnings
-from abc import ABC, ABCMeta
+from abc import ABC
 from typing import List
 
 from requests import Response

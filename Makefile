@@ -36,7 +36,7 @@ check-code:
 
 .PHONY: reformat
 reformat:
-	isort --profile black --atomic $(SOURCE_FOLDER) tests/*
+	isort --atomic $(SOURCE_FOLDER) tests/*
 	black $(SOURCE_FOLDER) tests/*
 
 
