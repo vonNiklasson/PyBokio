@@ -6,7 +6,7 @@ from requests import Response
 
 from pybokio.client.base_client import BaseClient, ConnectionMethod
 from pybokio.exceptions import AuthenticationError
-from routers.account_routers import AccountIsAuthenticatedRouter, AccountLoginRouter
+from routers.account_routers import AccountIsAuthenticatedRouter, AccountLoginRouter, AccountLogoutRouter
 
 
 class AccountClient(BaseClient, ABC):
@@ -41,8 +41,12 @@ class AccountClient(BaseClient, ABC):
             else:
                 raise Exception(exception_message)
 
-    def account_logout(self) -> bool:
-        pass
+    def account_logout(self):
+        """
+        Logs out from the current session. Will not return anything.
+        """
+        endpoint = AccountLogoutRouter()
+        response: Response = self.call_api(**endpoint.kwargs)
 
     def account_is_authenticated(self) -> bool:
         """

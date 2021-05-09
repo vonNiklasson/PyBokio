@@ -2,6 +2,7 @@ from typing import Dict
 
 from requests import Response
 
+from pybokio.exceptions import UnexpectedResponseError
 from pybokio.routers.base_router import BaseRouter
 
 
@@ -50,3 +51,12 @@ class AccountIsAuthenticatedRouter(BaseRouter):
 
     def validate_response(self, response: Response):
         res = self._validate_json_response(response, self._JSON_SCHEMA)
+
+
+class AccountLogoutRouter(BaseRouter):
+    _METHOD: str = "POST"
+    _PATH: str = "/Account/LogOff"
+
+    def validate_response(self, response: Response):
+        if not response.ok:
+            raise UnexpectedResponseError(f"Received status code {response.status_code} instead of 200")
