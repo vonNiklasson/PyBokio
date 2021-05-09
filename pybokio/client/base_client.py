@@ -69,8 +69,8 @@ class BaseClient(metaclass=abc.ABCMeta):
         Prepares the URL by adding the base url and adding company id where applicable.
 
         :param path: The path after the base url to do a request to.
-        :param base_url:
-        :return:
+        :param base_url: The base URL to append the path to.
+        :return: A formatted URL possible to make queries to.
         """
         base_url = self.base_url if base_url is None else base_url
         url = f"{base_url}/{path.lstrip('/')}"
