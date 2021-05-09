@@ -5,8 +5,8 @@ from jsonschema import exceptions as js_exceptions
 from jsonschema import validate as validate_json
 from requests import Response
 
-from pybokio.exceptions.common import ExpectedJsonException, InvalidJsonSchemaException
-from utils.verification import is_response_json
+from pybokio._utils.verification import is_response_json
+from pybokio.exceptions._common import ExpectedJsonException, InvalidJsonSchemaException
 
 
 class BaseRouter:

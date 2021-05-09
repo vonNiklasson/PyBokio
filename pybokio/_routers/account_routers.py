@@ -2,8 +2,8 @@ from typing import Dict
 
 from requests import Response
 
+from pybokio._routers.base_router import BaseRouter
 from pybokio.exceptions import UnexpectedResponseError
-from pybokio.routers.base_router import BaseRouter
 
 
 class AccountLoginRouter(BaseRouter):
