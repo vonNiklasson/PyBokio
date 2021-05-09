@@ -5,7 +5,7 @@ from jsonschema import exceptions as js_exceptions
 from jsonschema import validate as validate_json
 from requests import Response
 
-from _exceptions import ExpectedJsonException, InvalidJsonSchemaException
+from pybokio.exceptions.common import ExpectedJsonException, InvalidJsonSchemaException
 from utils.verification import is_response_json
 
 
