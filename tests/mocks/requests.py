@@ -4,7 +4,6 @@ from requests import Response
 
 
 class MockResponse(Response):
-
     def __init__(self, content: str = None, headers: Dict = None, status_code: int = 200):
         super(MockResponse, self).__init__()
         if content:
