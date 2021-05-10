@@ -12,6 +12,9 @@ class ConnectionMethod(enum.Enum):
 
 
 class BaseClient(ABC):
+    def __init__(self, **kwargs):
+        pass
+
     @property
     @abc.abstractmethod
     def connection_method(self) -> ConnectionMethod:

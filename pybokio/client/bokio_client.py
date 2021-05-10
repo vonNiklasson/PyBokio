@@ -31,7 +31,7 @@ class BokioClient(AccountClient, AccountingClient, BaseClient):
         timeout: int = 10,
         user_agent: str = DEFAULT_USER_AGENT,
     ):
-        super().__init__(username, password)
+        super().__init__(username=username, password=password)
         self.__connection_method: ConnectionMethod = ConnectionMethod.CREDENTIALS
         self.__username: str = username
         self.__password: str = password

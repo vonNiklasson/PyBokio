@@ -10,9 +10,10 @@ from pybokio.exceptions import AuthenticationError
 
 
 class AccountClient(BaseClient, ABC):
-    def __init__(self, username: str, password: str):
-        self.__username = username
-        self.__password = password
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.__username = kwargs.get("username", None)
+        self.__password = kwargs.get("password", None)
 
     def account_login(self) -> List[str]:
         # Can only login when using credentials as initialisation method.
