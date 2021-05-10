@@ -3,6 +3,7 @@
 [![License][license_img]][license_target]
 [![Latest PyPI version][pypi_version_img]][pypi_version_target]
 [![PyPI status][pypi_status_img]][pypi_status_target]
+[![Coverage][coverage_img]][coverage_target]
 
 
 [license_target]: https://raw.githubusercontent.com/vonNiklasson/pybokio/develop/LICENSE
@@ -13,6 +14,9 @@
 
 [pypi_status_target]: https://pypi.python.org/pypi/pybokio/
 [pypi_status_img]: https://img.shields.io/pypi/status/pybokio.svg
+
+[coverage_target]: https://codecov.io/gh/vonNiklasson/PyBokio
+[coverage_img]: https://codecov.io/gh/vonNiklasson/PyBokio/branch/main/graph/badge.svg
 
 Unofficial SDK for interacting with [Bokio](https://www.bokio.se)
 
