@@ -57,6 +57,14 @@ reformat:
 tests:
 	pytest tests/
 
+.PHONY: tests-unit
+tests-unit:
+	pytest tests/unit/
+
+.PHONY: tests-integration
+tests-integration:
+	pytest tests/integration/
+
 .PHONY: coverage
 coverage:
 	pytest --cov=$(SOURCE_FOLDER) tests/
