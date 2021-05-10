@@ -22,10 +22,7 @@ jobs:
       run: python -m pip install --upgrade pip
 
     - name: Install dependencies
-      run: make update
-
-    - name: Install dependencies
-      run: make update
+      run: make env-update
 
     - name: Style check (imports)
       run: make check-imports
