@@ -5,8 +5,9 @@ from typing import List
 from requests import Response
 
 from pybokio._routers.account_routers import AccountIsAuthenticatedRouter, AccountLoginRouter, AccountLogoutRouter
-from pybokio.client._base_client import BaseClient, ConnectionMethod
+from pybokio.client._base_client import BaseClient
 from pybokio.exceptions import AuthenticationError
+from pybokio.options import ConnectionMethod
 
 
 class AccountClient(BaseClient, ABC):

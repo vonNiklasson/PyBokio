@@ -1,14 +1,10 @@
 import abc
-import enum
 from abc import ABC
 
 import requests
 from requests import Response
 
-
-class ConnectionMethod(enum.Enum):
-    CREDENTIALS = enum.auto()
-    COOKIES = enum.auto()
+from pybokio.options import ConnectionMethod
 
 
 class BaseClient(ABC):

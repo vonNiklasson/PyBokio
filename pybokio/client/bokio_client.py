@@ -5,9 +5,10 @@ from requests import Response
 from requests.sessions import RequestsCookieJar
 
 from pybokio import __version__
-from pybokio.client._base_client import BaseClient, ConnectionMethod
+from pybokio.client._base_client import BaseClient
 from pybokio.client._subclients import AccountClient, AccountingClient
 from pybokio.exceptions import AuthenticationError
+from pybokio.options import ConnectionMethod
 
 
 class BokioClient(AccountClient, AccountingClient, BaseClient):
