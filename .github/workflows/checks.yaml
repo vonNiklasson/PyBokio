@@ -41,5 +41,5 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        env_vars: ${{ matrix.os }}, ${{ matrix.python-version }}
+        env_vars: OS=${{ matrix.os }}, python=${{ matrix.python-version }}
         fail_ci_if_error: true
