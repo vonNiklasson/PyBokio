@@ -53,6 +53,10 @@ reformat:
 	isort --atomic $(SOURCE_FOLDER) tests/*
 	black $(SOURCE_FOLDER) tests/*
 
+.PHONY: tests
+tests:
+	pytest tests/
+
 .PHONY: coverage
 coverage:
 	pytest --cov=$(SOURCE_FOLDER) tests/

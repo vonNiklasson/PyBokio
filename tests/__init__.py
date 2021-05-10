@@ -1,1 +1,1 @@
-from pybokio.client.bokio_client import BokioClient
+from pybokio import BokioClient

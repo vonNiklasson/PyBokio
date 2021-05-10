@@ -1,6 +1,6 @@
 from abc import ABC
 
-from client._base_client import BaseClient
+from pybokio.client._base_client import BaseClient
 
 
 class AccountingClient(BaseClient, ABC):
