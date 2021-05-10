@@ -17,9 +17,17 @@ class AccountClient(BaseClient, ABC):
         self.__password = kwargs.get("password", None)
 
     def account_login(self) -> List[str]:
+        """
+        Logs in to the account and store the session for subsequent api calls.
+        Can only be called if using credentials to authenticate, otherwise connect() should be used.
+
+        :return: A list of associated company ids to the user.
+        :raises ConnectionError: If trying to login when using cookies to authenticate.
+        :raises AuthenticationError: If the credentials are invalid.
+        """
         # Can only login when using credentials as initialisation method.
         if self.connection_method is not ConnectionMethod.CREDENTIALS:
-            raise Exception("Cannot login when using cookies. Use connect() instead.")
+            raise ConnectionError("Cannot login when using cookies. Use connect() instead.")
 
         payload = {"userName": self.__username, "password": self.__password}
         endpoint = AccountLoginRouter()
