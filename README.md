@@ -91,5 +91,3 @@ To contribute, please take the following steps:
 ## Authors
 
 - [@vonNiklasson](https://www.github.com/vonNiklasson)
-
-  

@@ -1,22 +1,21 @@
 import warnings
-from abc import ABC
 from typing import List
 
 from requests import Response
 
 from pybokio._routers.account_routers import AccountIsAuthenticatedRouter, AccountLoginRouter, AccountLogoutRouter
-from pybokio.client._base_client import BaseClient
+from pybokio.client._subclients._base_sub_client import BaseSubClient
 from pybokio.exceptions import AuthenticationError
 from pybokio.options import ConnectionMethod
 
 
-class AccountClient(BaseClient, ABC):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+class AccountClient(BaseSubClient):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.__username = kwargs.get("username", None)
         self.__password = kwargs.get("password", None)
 
-    def account_login(self) -> List[str]:
+    def login(self) -> List[str]:
         """
         Logs in to the account and store the session for subsequent api calls.
         Can only be called if using credentials to authenticate, otherwise connect() should be used.
@@ -26,20 +25,20 @@ class AccountClient(BaseClient, ABC):
         :raises AuthenticationError: If the credentials are invalid.
         """
         # Can only login when using credentials as initialisation method.
-        if self.connection_method is not ConnectionMethod.CREDENTIALS:
-            raise ConnectionError("Cannot login when using cookies. Use connect() instead.")
+        if self.client.connection_method is not ConnectionMethod.CREDENTIALS:
+            raise ConnectionError("Cannot login when using cookies. Use BokioClient.connect() instead.")
 
         payload = {"userName": self.__username, "password": self.__password}
         endpoint = AccountLoginRouter()
-        response: Response = self.call_api(**endpoint.kwargs, json=payload)
+        response: Response = self.client.call_api(**endpoint.kwargs, json=payload)
 
         endpoint.validate_response(response)
         res = response.json()
 
         if res["Success"] is True:
             company_ids = res["Data"]["CompanyIds"]
-            if self.company_id not in company_ids:
-                warnings.warn(f'company_id "{self.company_id}" not among allowed ids "{", ".join(company_ids)}"')
+            if self.client.company_id not in company_ids:
+                warnings.warn(f'company_id "{self.client.company_id}" not among allowed ids "{", ".join(company_ids)}"')
             return company_ids
         else:
             error_code = res["Error"]
@@ -51,21 +50,21 @@ class AccountClient(BaseClient, ABC):
             else:
                 raise Exception(exception_message)
 
-    def account_logout(self):
+    def logout(self) -> None:
         """
         Logs out from the current session. Will not return anything.
         """
         endpoint = AccountLogoutRouter()
-        response: Response = self.call_api(**endpoint.kwargs)
+        response: Response = self.client.call_api(**endpoint.kwargs)
 
-    def account_is_authenticated(self) -> bool:
+    def is_authenticated(self) -> bool:
         """
         Checks is the current session or credentials are authenticated.
 
         :return: True if the credentials or session are valid, otherwise False.
         """
         endpoint = AccountIsAuthenticatedRouter()
-        response: Response = self.call_api(**endpoint.kwargs)
+        response: Response = self.client.call_api(**endpoint.kwargs)
         endpoint.validate_response(response)
         res = response.json()
         return res["Data"]
