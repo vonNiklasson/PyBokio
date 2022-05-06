@@ -1,7 +1,7 @@
 import enum
 
 
-class AccountingUploadReceiptCategories(enum.Enum):
+class FileUploadReceiptCategories(enum.Enum):
     EXPENSES = "expense"
     INCOME = "income"
     OTHER = "other"

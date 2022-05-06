@@ -102,3 +102,5 @@ Thumbs.db
 
 # Local testing
 .local
+
+pybokio/debug*.py

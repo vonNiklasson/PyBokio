@@ -6,7 +6,7 @@ from pybokio._routers.base_router import BaseRouter
 from pybokio.exceptions import UnexpectedResponseError
 
 
-class AccountingUploadReceiptPdfRouter(BaseRouter):
+class FileUploadReceiptPdfRouter(BaseRouter):
     _METHOD: str = "POST"
     _PATH: str = "%company_id%/Accounting/Receipt/UploadPdf"
 
@@ -22,7 +22,7 @@ class AccountingUploadReceiptPdfRouter(BaseRouter):
         res = self._validate_json_response(response, self._JSON_SCHEMA)
 
 
-class AccountingDeleteReceiptsRouter(BaseRouter):
+class FileDeleteReceiptsRouter(BaseRouter):
     _METHOD: str = "POST"
     _PATH: str = "%company_id%/Accounting/Receipt/BatchDelete"
 
@@ -41,7 +41,7 @@ class AccountingDeleteReceiptsRouter(BaseRouter):
         res = self._validate_json_response(response, self._JSON_SCHEMA)
 
 
-class AccountingListReceiptsRouter(BaseRouter):
+class FileListReceiptsRouter(BaseRouter):
     _METHOD: str = "GET"
     _PATH: str = "%company_id%/Accounting/Receipt/List"
 

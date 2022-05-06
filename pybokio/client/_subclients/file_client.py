@@ -2,25 +2,25 @@ from typing import List, Union
 
 from requests import Response
 
-from pybokio._routers.accounting_routers import (
-    AccountingDeleteReceiptsRouter,
-    AccountingListReceiptsRouter,
-    AccountingUploadReceiptPdfRouter,
+from pybokio._routers.file_routers import (
+    FileDeleteReceiptsRouter,
+    FileListReceiptsRouter,
+    FileUploadReceiptPdfRouter,
 )
 from pybokio.client._subclients._base_sub_client import BaseSubClient
-from pybokio.options import AccountingUploadReceiptCategories
+from pybokio.options import FileUploadReceiptCategories
 
 
-class AccountingClient(BaseSubClient):
+class FileClient(BaseSubClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def upload_receipt_pdf(
-        self, file_path, category: AccountingUploadReceiptCategories = AccountingUploadReceiptCategories.UNKNOWN
+        self, file_path, category: FileUploadReceiptCategories = FileUploadReceiptCategories.UNKNOWN
     ) -> str:
         data = {"selectedType": category.value, "startRecepiptPredictionsNow": True}
         files = {"file": open(file_path, "rb")}
-        endpoint = AccountingUploadReceiptPdfRouter()
+        endpoint = FileUploadReceiptPdfRouter()
         response: Response = self.client.call_api(**endpoint.kwargs, data=data, files=files)
 
         endpoint.validate_response(response)
@@ -29,7 +29,7 @@ class AccountingClient(BaseSubClient):
         return res["Id"]
 
     def list_receipts(self) -> List[str]:
-        endpoint = AccountingListReceiptsRouter()
+        endpoint = FileListReceiptsRouter()
         response: Response = self.client.call_api(**endpoint.kwargs)
 
         endpoint.validate_response(response)
@@ -43,7 +43,7 @@ class AccountingClient(BaseSubClient):
 
         payload = {"ReceiptIds": receipts}
 
-        endpoint = AccountingDeleteReceiptsRouter()
+        endpoint = FileDeleteReceiptsRouter()
         response: Response = self.client.call_api(**endpoint.kwargs, json=payload)
 
         endpoint.validate_response(response)
