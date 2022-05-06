@@ -5,13 +5,12 @@ from requests import Response
 from requests.sessions import RequestsCookieJar
 
 from pybokio import __version__
-from pybokio.client._base_client import BaseClient
-from pybokio.client._subclients import AccountClient, AccountingClient
+from pybokio.client._subclients import AccountClient, FileClient
 from pybokio.exceptions import AuthenticationError
 from pybokio.options import ConnectionMethod
 
 
-class BokioClient(AccountClient, AccountingClient, BaseClient):
+class BokioClient:
 
     DEFAULT_BASE_URL: str = "https://app.bokio.se"
     """
@@ -32,27 +31,23 @@ class BokioClient(AccountClient, AccountingClient, BaseClient):
         timeout: int = 10,
         user_agent: str = DEFAULT_USER_AGENT,
     ):
-        super().__init__(username=username, password=password)
-        self.__connection_method: ConnectionMethod = ConnectionMethod.CREDENTIALS
-        self.__username: str = username
-        self.__password: str = password
-        self.__company_id: str = company_id
-        self.__base_url: str = base_url.rstrip("/")
-        self.__timeout: int = timeout
-        self.__user_agent: str = user_agent
-
+        self.__company_id = company_id
+        self.__base_url = base_url
+        self.__timeout = timeout
+        self.__user_agent = user_agent
         self.__session = requests.session()
+        self.__connection_method = ConnectionMethod.NONE
+
+        if username is not None and password is not None:
+            self.__connection_method = ConnectionMethod.CREDENTIALS
+
+        # Sub clients
+        self.account = AccountClient(self, username=username, password=password)
+        self.file = FileClient(self)
 
     @classmethod
-    def from_cookies(
-        cls,
-        company_id: str,
-        cookies: RequestsCookieJar,
-        base_url: str = DEFAULT_BASE_URL,
-        timeout: int = 10,
-        user_agent: str = DEFAULT_USER_AGENT,
-    ):
-        client = cls(company_id=company_id, base_url=base_url, timeout=timeout, user_agent=user_agent)
+    def from_cookies(cls, company_id: str, cookies: RequestsCookieJar, **kwargs):
+        client = cls(company_id=company_id, username=None, password=None, **kwargs)
         client.__connection_method = ConnectionMethod.COOKIES
         client.session.cookies.update(cookies)
         return client
@@ -63,6 +58,23 @@ class BokioClient(AccountClient, AccountingClient, BaseClient):
         The method used to establish a connection or authenticate to Bokio.
         """
         return self.__connection_method
+
+    def connect(self):
+        """
+        Attempts to connect to Bokio with the provided connection method.
+        Will raise Exceptions if unable to do so.
+
+        :raises AuthenticationError: If it wasn't possible to authenticate.
+        """
+        if self.connection_method == ConnectionMethod.CREDENTIALS:
+            # account_login() will raise AuthenticationError if failing.
+            self.account.login()
+        elif self.connection_method == ConnectionMethod.COOKIES:
+            is_authenticated = self.account.is_authenticated()
+            if not is_authenticated:
+                raise AuthenticationError("Provided cookies couldn't authenticate.")
+        else:
+            raise AuthenticationError("No authentication method provided.")
 
     @property
     def company_id(self) -> str:
@@ -115,9 +127,9 @@ class BokioClient(AccountClient, AccountingClient, BaseClient):
         :param base_url: The base URL to append the path to.
         :return: A formatted URL possible to make queries to.
         """
-        base_url = self.base_url if base_url is None else base_url
+        base_url = self.base_url if base_url is None else base_url.rstrip("/")
         url = f"{base_url}/{path.lstrip('/')}"
-        url = url.replace("%company_id%", self.company_id)
+        url = url.replace("<company_id>", self.company_id)
 
         return url
 
@@ -143,18 +155,3 @@ class BokioClient(AccountClient, AccountingClient, BaseClient):
         url = self._prepare_url(path)
         response = self.session.request(method, url, **kwargs)
         return response
-
-    def connect(self):
-        """
-        Attempts to connect to Bokio with the provided connection method.
-        Will raise Exceptions if unable to do so.
-
-        :raises AuthenticationError: If it wasn't possible to authenticate.
-        """
-        if self.connection_method == ConnectionMethod.CREDENTIALS:
-            # account_login() will raise AuthenticationError if failing.
-            self.account_login()
-        elif self.connection_method == ConnectionMethod.COOKIES:
-            is_authenticated = self.account_is_authenticated()
-            if not is_authenticated:
-                raise AuthenticationError("Provided cookies couldn't authenticate.")

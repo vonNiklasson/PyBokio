@@ -42,7 +42,8 @@ class BaseRouter:
 
     @property
     def kwargs(self):
-        return {"method": self.method, "path": self.path}
+        path = self.prepare_path()
+        return {"method": self.method, "path": path}
 
     @property
     def method(self) -> str:
@@ -55,3 +56,6 @@ class BaseRouter:
         if not hasattr(self, "_PATH"):
             raise NotImplementedError()
         return self._PATH
+
+    def prepare_path(self, *args, **kwargs):
+        return self.path

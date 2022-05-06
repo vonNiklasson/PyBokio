@@ -23,7 +23,7 @@ class AccountLoginRouter(BaseRouter):
         },
         "properties": {
             "Data": {"oneOf": [{"type": "null"}, {"$ref": "#/definitions/login_data"}]},
-            "Error": {"type": ["string", "null"]},
+            "Error": {"type": ["string", "integer"]},
             "Success": {"type": "boolean"},
             "ErrorMessage": {"type": ["string", "null"]},
         },
@@ -42,7 +42,7 @@ class AccountIsAuthenticatedRouter(BaseRouter):
         "type": "object",
         "properties": {
             "Data": {"type": "boolean"},
-            "Error": {"type": ["string", "null"]},
+            "Error": {"type": ["string", "integer"]},
             "Success": {"type": "boolean"},
             "ErrorMessage": {"type": ["string", "null"]},
         },
