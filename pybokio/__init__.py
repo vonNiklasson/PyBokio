@@ -3,7 +3,7 @@
 
 __author__ = "Johan Niklasson"
 __email__ = "johan@niklasson.me"
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 
 from .client.bokio_client import BokioClient
