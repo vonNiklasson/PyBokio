@@ -8,7 +8,7 @@ from pybokio.exceptions import UnexpectedResponseError
 
 class FileUploadReceiptPdfRouter(BaseRouter):
     _METHOD: str = "POST"
-    _PATH: str = "%company_id%/Accounting/Receipt/UploadPdf"
+    _PATH: str = "<company_id>/Accounting/Receipt/UploadPdf"
 
     _JSON_SCHEMA: Dict = {
         "type": "object",
@@ -24,7 +24,7 @@ class FileUploadReceiptPdfRouter(BaseRouter):
 
 class FileDeleteReceiptsRouter(BaseRouter):
     _METHOD: str = "POST"
-    _PATH: str = "%company_id%/Accounting/Receipt/BatchDelete"
+    _PATH: str = "<company_id>/Accounting/Receipt/BatchDelete"
 
     _JSON_SCHEMA: Dict = {
         "type": "object",
@@ -43,7 +43,16 @@ class FileDeleteReceiptsRouter(BaseRouter):
 
 class FileListReceiptsRouter(BaseRouter):
     _METHOD: str = "GET"
-    _PATH: str = "%company_id%/Accounting/Receipt/List"
+    _PATH: str = (
+        "<company_id>/Accounting/Receipt/ListAllReceiptsForUploadsScene?includeBookkeptItems=<include_bookkept>"
+    )
+
+    def __init__(self, include_bookkept: bool):
+        self.include_bookkept = include_bookkept
+
+    def prepare_path(self):
+        path = super().prepare_path()
+        return path.replace("<include_bookkept>", str(self.include_bookkept).lower())
 
     _JSON_SCHEMA: Dict = {
         "type": "object",

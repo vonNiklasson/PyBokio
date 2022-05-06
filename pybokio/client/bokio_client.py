@@ -129,7 +129,7 @@ class BokioClient:
         """
         base_url = self.base_url if base_url is None else base_url.rstrip("/")
         url = f"{base_url}/{path.lstrip('/')}"
-        url = url.replace("%company_id%", self.company_id)
+        url = url.replace("<company_id>", self.company_id)
 
         return url
 

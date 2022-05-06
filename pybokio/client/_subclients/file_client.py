@@ -2,11 +2,7 @@ from typing import List, Union
 
 from requests import Response
 
-from pybokio._routers.file_routers import (
-    FileDeleteReceiptsRouter,
-    FileListReceiptsRouter,
-    FileUploadReceiptPdfRouter,
-)
+from pybokio._routers.file_routers import FileDeleteReceiptsRouter, FileListReceiptsRouter, FileUploadReceiptPdfRouter
 from pybokio.client._subclients._base_sub_client import BaseSubClient
 from pybokio.options import FileUploadReceiptCategories
 
@@ -28,8 +24,8 @@ class FileClient(BaseSubClient):
 
         return res["Id"]
 
-    def list_receipts(self) -> List[str]:
-        endpoint = FileListReceiptsRouter()
+    def list_receipts(self, include_bookkept: bool = False) -> List[str]:
+        endpoint = FileListReceiptsRouter(include_bookkept=include_bookkept)
         response: Response = self.client.call_api(**endpoint.kwargs)
 
         endpoint.validate_response(response)
