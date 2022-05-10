@@ -5,7 +5,7 @@ from requests import Response
 from requests.sessions import RequestsCookieJar
 
 from pybokio import __version__
-from pybokio.client._subclients import AccountClient, FileClient
+from pybokio.client._subclients import AccountClient, FileClient, SupplierClient
 from pybokio.exceptions import AuthenticationError
 from pybokio.options import ConnectionMethod
 
@@ -44,6 +44,7 @@ class BokioClient:
         # Sub clients
         self.account = AccountClient(self, username=username, password=password)
         self.file = FileClient(self)
+        self.supplier = SupplierClient(self)
 
     @classmethod
     def from_cookies(cls, company_id: str, cookies: RequestsCookieJar, **kwargs):
