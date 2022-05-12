@@ -2,7 +2,7 @@ from types import SimpleNamespace
 from typing import Any, List, Optional
 
 
-class Receipt(SimpleNamespace):
+class ListedReceipt(SimpleNamespace):
     class ExtraPage(SimpleNamespace):
         Id: str
         ReceiptId: str

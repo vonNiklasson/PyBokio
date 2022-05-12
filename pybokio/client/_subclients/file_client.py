@@ -4,7 +4,7 @@ from requests import Response
 
 from pybokio._routers.file_routers import FileDeleteReceiptsRouter, FileListReceiptsRouter, FileUploadReceiptPdfRouter
 from pybokio.client._subclients._base_sub_client import BaseSubClient
-from pybokio.models.file import Receipt
+from pybokio.models.file import ListedReceipt
 from pybokio.options import FileUploadReceiptCategories
 
 
@@ -14,7 +14,7 @@ class FileClient(BaseSubClient):
 
     def upload_receipt_pdf(
         self, file_path, category: FileUploadReceiptCategories = FileUploadReceiptCategories.UNKNOWN
-    ) -> Receipt:
+    ) -> ListedReceipt:
         data = {"selectedType": category.value, "startReceiptPredictionsNow": True}
         files = {"file": open(file_path, "rb")}
         endpoint = FileUploadReceiptPdfRouter()
@@ -23,19 +23,19 @@ class FileClient(BaseSubClient):
         endpoint.validate_response(response)
         res = response.json()
 
-        return Receipt(**res)
+        return ListedReceipt(**res)
 
-    def list_receipts(self, include_bookkept: bool = False) -> List[Receipt]:
+    def list_receipts(self, include_bookkept: bool = False) -> List[ListedReceipt]:
         endpoint = FileListReceiptsRouter(include_bookkept=include_bookkept)
         response: Response = self.client.call_api(**endpoint.kwargs)
 
         endpoint.validate_response(response)
         res = response.json()
 
-        return [Receipt(**receipt) for receipt in res["Data"]["Receipts"]]
+        return [ListedReceipt(**receipt) for receipt in res["Data"]["Receipts"]]
 
-    def delete_receipts(self, receipts: List[Union[str, Receipt]]) -> None:
-        receipt_ids = [receipt.Id if isinstance(receipt, Receipt) else receipt for receipt in receipts]
+    def delete_receipts(self, receipts: List[Union[str, ListedReceipt]]) -> None:
+        receipt_ids = [receipt.Id if isinstance(receipt, ListedReceipt) else receipt for receipt in receipts]
 
         payload = {"ReceiptIds": receipt_ids}
 
@@ -45,5 +45,5 @@ class FileClient(BaseSubClient):
         endpoint.validate_response(response)
         res = response.json()
 
-    def delete_receipt(self, receipt: Union[str, Receipt]) -> None:
+    def delete_receipt(self, receipt: Union[str, ListedReceipt]) -> None:
         return self.delete_receipts([receipt])
