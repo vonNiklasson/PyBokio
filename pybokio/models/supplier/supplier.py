@@ -17,7 +17,7 @@ class Supplier(SimpleNamespace):
         if "Address" in kwargs:
             self.Address = Supplier.AddressObj(**kwargs["Address"])
 
-    Id: Optional[str]
+    Id: str
     CompanyId: Optional[str]
     Name: Optional[str]
     OrgNumber: Optional[str]

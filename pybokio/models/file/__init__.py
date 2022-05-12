@@ -1,1 +1,1 @@
-from .receipt import Receipt
+from .receipt import ListedReceipt
